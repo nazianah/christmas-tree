@@ -189,6 +189,28 @@ When no hand is detected, you can:
 - **Scroll** to zoom in/out
 - **Right-click and drag** to pan (disabled by default)
 
+### Mobile & Touch Controls
+
+The app is **responsive and mobile-friendly**:
+
+**On devices with camera access:**
+- Hand gesture control works as described above (open/close hand, move for camera angle)
+
+**On devices without camera (or camera permission denied):**
+- Two fallback buttons appear in the top-right corner:
+  - **Unleash** button — Toggles chaos mode
+  - **Restore** button — Returns to formed mode
+
+**Touch controls (all devices):**
+- **Swipe left/right** — Rotate the tree horizontally
+- **Swipe up/down** — Tilt the tree vertically
+- **Pinch in/out** — Zoom in/out
+
+**Optimized for mobile:**
+- Touch targets are sized for easy tapping (44×44px minimum)
+- Responsive text sizing (smaller on mobile, larger on desktop)
+- Fallback UI when camera is unavailable
+
 ## 🏗️ Tech Stack
 
 ### Frontend
@@ -214,7 +236,9 @@ When no hand is detected, you can:
 - Instanced rendering for performance
 - Bloom and post-processing effects
 
-## 🎅 Happy Holidays!
+## 🎅 Happy Holidays, jhakri nazianah!
+
+Made with ✨ for your festive season.
 
 May your code be merry and bright! 🎄✨
 

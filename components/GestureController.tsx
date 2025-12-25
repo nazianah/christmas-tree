@@ -8,14 +8,16 @@ interface GestureControllerProps {
   currentMode: TreeMode;
   onHandPosition?: (x: number, y: number, detected: boolean) => void;
   onTwoHandsDetected?: (detected: boolean) => void;
+  isMobile?: boolean;
 }
 
-export const GestureController: React.FC<GestureControllerProps> = ({ onModeChange, currentMode, onHandPosition, onTwoHandsDetected }) => {
+export const GestureController: React.FC<GestureControllerProps> = ({ onModeChange, currentMode, onHandPosition, onTwoHandsDetected, isMobile }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [gestureStatus, setGestureStatus] = useState<string>("Initializing...");
   const [handPos, setHandPos] = useState<{ x: number; y: number } | null>(null);
+  const [cameraPermissionDenied, setCameraPermissionDenied] = useState(false);
   const lastModeRef = useRef<TreeMode>(currentMode);
   
   // Debounce logic refs
@@ -50,6 +52,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
         console.error("Error initializing MediaPipe:", error);
         console.warn("Gesture control is unavailable. The app will still work without it.");
         setGestureStatus("Gesture control unavailable");
+        setCameraPermissionDenied(true);
         // Don't block the app if gesture control fails
       }
     };
@@ -69,7 +72,8 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
           }
         } catch (err) {
           console.error("Error accessing webcam:", err);
-          setGestureStatus("Permission Denied");
+          setCameraPermissionDenied(true);
+          setGestureStatus("Camera not available");
         }
       }
     };
@@ -287,9 +291,30 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
 
   return (
     <div className="absolute top-6 right-[8%] z-50 flex flex-col items-end pointer-events-none">
+      {/* Show fallback UI if camera is unavailable (especially on mobile) */}
+      {cameraPermissionDenied && (
+        <div className="relative mb-4 bg-black/80 border-2 border-[#D4AF37] rounded-lg p-4 text-center pointer-events-auto max-w-xs">
+          <p className="text-[#D4AF37] font-serif text-sm mb-3">Camera unavailable</p>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => onModeChange(TreeMode.CHAOS)}
+              className="px-4 py-2 border border-[#D4AF37] bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 transition-colors text-[#D4AF37] text-xs font-serif rounded"
+            >
+              Unleash
+            </button>
+            <button
+              onClick={() => onModeChange(TreeMode.FORMED)}
+              className="px-4 py-2 border border-[#D4AF37] bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 transition-colors text-[#D4AF37] text-xs font-serif rounded"
+            >
+              Restore
+            </button>
+          </div>
+        </div>
+      )}
 
       
-      {/* Camera Preview Frame */}
+      {/* Camera Preview Frame - only show if camera is available */}
+      {!cameraPermissionDenied && (
       <div className="relative w-[18.75vw] h-[14.0625vw] border-2 border-[#D4AF37] rounded-lg overflow-hidden shadow-[0_0_20px_rgba(212,175,55,0.3)] bg-black">
         {/* Decorative Lines */}
         <div className="absolute inset-0 border border-[#F5E6BF]/20 m-1 rounded-sm z-10"></div>
@@ -328,6 +353,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
         )}
     
       </div>
+      )}
     </div>
   );
 };

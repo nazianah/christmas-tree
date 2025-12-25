@@ -5,6 +5,7 @@ import { Loader } from '@react-three/drei';
 import { Experience } from './components/Experience';
 import { UIOverlay } from './components/UIOverlay';
 import { GestureController } from './components/GestureController';
+import { TouchController } from './components/TouchController';
 import { TreeMode } from './types';
 
 // Simple Error Boundary to catch 3D resource loading errors (like textures)
@@ -53,6 +54,16 @@ export default function App() {
   const [isSharedView, setIsSharedView] = useState(false);
   const [twoHandsDetected, setTwoHandsDetected] = useState(false);
   const [closestPhoto, setClosestPhoto] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [cameraRotation, setCameraRotation] = useState({ x: 0, y: 0 });
+  const [cameraZoom, setCameraZoom] = useState(1);
+
+  // Detect mobile on mount
+  useEffect(() => {
+    const userAgent = navigator.userAgent;
+    const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+    setIsMobile(isMobileDevice || window.innerWidth < 768);
+  }, []);
 
   // Check for share parameter in URL on mount
   useEffect(() => {
@@ -117,6 +128,30 @@ export default function App() {
     setUploadedPhotos(photos);
   };
 
+  const handleSwipe = (direction: 'left' | 'right' | 'up' | 'down') => {
+    const rotationStep = 0.1;
+    const zoomStep = 0.1;
+
+    switch (direction) {
+      case 'left':
+        setCameraRotation((prev) => ({ ...prev, y: prev.y - rotationStep }));
+        break;
+      case 'right':
+        setCameraRotation((prev) => ({ ...prev, y: prev.y + rotationStep }));
+        break;
+      case 'up':
+        setCameraRotation((prev) => ({ ...prev, x: prev.x - rotationStep }));
+        break;
+      case 'down':
+        setCameraRotation((prev) => ({ ...prev, x: prev.x + rotationStep }));
+        break;
+    }
+  };
+
+  const handlePinch = (scale: number) => {
+    setCameraZoom((prev) => Math.max(0.5, Math.min(3, prev * scale)));
+  };
+
   return (
     <div className="w-full h-screen relative bg-gradient-to-b from-black via-[#001a0d] to-[#0a2f1e]">
       <ErrorBoundary>
@@ -158,7 +193,10 @@ export default function App() {
       )}
       
       {/* Gesture Control Module */}
-      <GestureController currentMode={mode} onModeChange={setMode} onHandPosition={handleHandPosition} onTwoHandsDetected={handleTwoHandsDetected} />
+      <GestureController currentMode={mode} onModeChange={setMode} onHandPosition={handleHandPosition} onTwoHandsDetected={handleTwoHandsDetected} isMobile={isMobile} />
+      
+      {/* Touch Controller for mobile swipe and pinch controls */}
+      {isMobile && <TouchController onSwipe={handleSwipe} onPinch={handlePinch} />}
       
       {/* Photo Overlay - Shows when two hands detected */}
       {closestPhoto && (
