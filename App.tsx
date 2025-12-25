@@ -226,6 +226,11 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Footer with creator name */}
+      <footer className="absolute bottom-4 left-4 text-[#D4AF37] font-serif text-sm pointer-events-none animate-float">
+        <p className="animate-glow-pulse">Created by: jhakri nazianah</p>
+      </footer>
     </div>
   );
 }
