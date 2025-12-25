@@ -181,6 +181,9 @@ Implementation details:
    - Up/Down: Vertical tilt
 3. **Open your hand** (spread all fingers): Unleash chaos mode
 4. **Close your fist**: Restore tree to formed mode
+5. **Two-hand pinch**: Move hands closer/further apart to zoom in/out
+   - Hands closer together: Zoom out (see more)
+   - Hands further apart: Zoom in (closer view)
 
 ### Mouse Controls
 

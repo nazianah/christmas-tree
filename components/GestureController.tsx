@@ -8,10 +8,11 @@ interface GestureControllerProps {
   currentMode: TreeMode;
   onHandPosition?: (x: number, y: number, detected: boolean) => void;
   onTwoHandsDetected?: (detected: boolean) => void;
+  onZoom?: (scale: number) => void;
   isMobile?: boolean;
 }
 
-export const GestureController: React.FC<GestureControllerProps> = ({ onModeChange, currentMode, onHandPosition, onTwoHandsDetected, isMobile }) => {
+export const GestureController: React.FC<GestureControllerProps> = ({ onModeChange, currentMode, onHandPosition, onTwoHandsDetected, onZoom, isMobile }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,6 +20,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
   const [handPos, setHandPos] = useState<{ x: number; y: number } | null>(null);
   const [cameraPermissionDenied, setCameraPermissionDenied] = useState(false);
   const lastModeRef = useRef<TreeMode>(currentMode);
+  const lastHandDistanceRef = useRef<number | null>(null);
   
   // Debounce logic refs
   const openFrames = useRef(0);
@@ -163,6 +165,25 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
             onTwoHandsDetected(twoHandsDetected);
           }
 
+          // If two hands detected, compute distance for pinch zoom
+          if (twoHandsDetected && result.landmarks.length >= 2 && onZoom) {
+            const hand1 = result.landmarks[0][9]; // Middle finger base of hand 1
+            const hand2 = result.landmarks[1][9]; // Middle finger base of hand 2
+            const distance = Math.hypot(hand2.x - hand1.x, hand2.y - hand1.y);
+            
+            // If we have a previous distance, calculate pinch scale
+            if (lastHandDistanceRef.current !== null) {
+              const scale = lastHandDistanceRef.current / distance; // Inverted for intuitive pinch
+              // Only trigger zoom if distance change is significant (>5% change)
+              if (Math.abs(scale - 1) > 0.05) {
+                onZoom(scale);
+              }
+            }
+            lastHandDistanceRef.current = distance;
+          } else {
+            lastHandDistanceRef.current = null;
+          }
+
           // Draw all detected hands at once
           drawAllHands(result.landmarks);
           
@@ -178,6 +199,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
             if (onTwoHandsDetected) {
               onTwoHandsDetected(false);
             }
+            lastHandDistanceRef.current = null;
             // Clear canvas when no hand detected
             if (canvasRef.current) {
               const ctx = canvasRef.current.getContext('2d');

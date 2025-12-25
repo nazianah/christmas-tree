@@ -193,7 +193,7 @@ export default function App() {
       )}
       
       {/* Gesture Control Module */}
-      <GestureController currentMode={mode} onModeChange={setMode} onHandPosition={handleHandPosition} onTwoHandsDetected={handleTwoHandsDetected} isMobile={isMobile} />
+      <GestureController currentMode={mode} onModeChange={setMode} onHandPosition={handleHandPosition} onTwoHandsDetected={handleTwoHandsDetected} onZoom={handlePinch} isMobile={isMobile} />
       
       {/* Touch Controller for mobile swipe and pinch controls */}
       {isMobile && <TouchController onSwipe={handleSwipe} onPinch={handlePinch} />}
