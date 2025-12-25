@@ -226,8 +226,8 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
         </h1>
       </header>
 
-      {/* Right Bottom Action Area */}
-      <div className="absolute bottom-8 right-8 flex flex-col items-end gap-4 pointer-events-auto">
+      {/* Right Bottom Action Area - Responsive positioning */}
+      <div className="absolute bottom-8 right-8 sm:bottom-24 sm:right-4 md:bottom-8 md:right-8 flex flex-col items-end gap-4 pointer-events-auto max-w-xs sm:max-w-sm">
         
         {/* Hidden file input */}
         <input
@@ -243,9 +243,9 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
         {isSharedView && (
           <button
             onClick={handleCreateMine}
-            className="group px-6 py-3 border-2 border-[#D4AF37] bg-black/70 backdrop-blur-md overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_#D4AF37] hover:border-[#fff] hover:bg-[#D4AF37]/20"
+            className="group px-4 py-2 sm:px-6 sm:py-3 border-2 border-[#D4AF37] bg-black/70 backdrop-blur-md overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_#D4AF37] hover:border-[#fff] hover:bg-[#D4AF37]/20 min-h-[44px] min-w-[44px]"
           >
-            <span className="relative z-10 font-serif text-base md:text-lg text-[#D4AF37] tracking-[0.1em] group-hover:text-white transition-colors whitespace-nowrap">
+            <span className="relative z-10 font-serif text-xs sm:text-base md:text-lg text-[#D4AF37] tracking-[0.1em] group-hover:text-white transition-colors whitespace-nowrap">
               Create My Tree
             </span>
           </button>
@@ -272,14 +272,14 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
                 <button
                   onClick={handleShare}
                   disabled={isSharing}
-                  className="group px-6 py-3 border-2 border-[#D4AF37] bg-black/70 backdrop-blur-md overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_#D4AF37] hover:border-[#fff] hover:bg-[#D4AF37]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group px-4 py-2 sm:px-6 sm:py-3 border-2 border-[#D4AF37] bg-black/70 backdrop-blur-md overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_#D4AF37] hover:border-[#fff] hover:bg-[#D4AF37]/20 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px]"
                 >
-                    <span className="relative z-10 font-serif text-base md:text-lg text-[#D4AF37] tracking-[0.1em] group-hover:text-white transition-colors whitespace-nowrap">
+                    <span className="relative z-10 font-serif text-xs sm:text-base md:text-lg text-[#D4AF37] tracking-[0.1em] group-hover:text-white transition-colors whitespace-nowrap">
                     {uploadProgress || (isSharing ? 'Generating...' : 'Generate share link')}
                   </span>
                 </button>
                 {shareError && (
-                  <p className="text-red-400 text-xs font-serif text-right">{shareError}</p>
+                  <p className="text-red-400 text-xs font-serif text-right max-w-xs">{shareError}</p>
                 )}
               </div>
             )}
